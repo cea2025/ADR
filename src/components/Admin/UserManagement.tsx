@@ -70,21 +70,6 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleToggleUserStatus = (userId: string) => {
-    setUsers(users.map(user => 
-      user.id === userId ? { ...user, isActive: !user.isActive } : user
-    ));
-  };
-
-  const getUserTypeLabel = (type: UserType) => {
-    const labels = {
-      'website': 'אתר',
-      'representative': 'נציג',
-      'manager': 'מנהל'
-    };
-    return labels[type];
-  };
-
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('he-IL', {
       year: 'numeric',
@@ -106,6 +91,21 @@ const UserManagement: React.FC = () => {
     if (diffMins < 60) return `לפני ${diffMins} דקות`;
     if (diffHours < 24) return `לפני ${diffHours} שעות`;
     return `לפני ${diffDays} ימים`;
+  };
+
+  const handleToggleUserStatus = (userId: string) => {
+    setUsers(users.map(user => 
+      user.id === userId ? { ...user, isActive: !user.isActive } : user
+    ));
+  };
+
+  const getUserTypeLabel = (type: UserType) => {
+    const labels = {
+      'website': 'אתר',
+      'representative': 'נציג',
+      'manager': 'מנהל'
+    };
+    return labels[type];
   };
 
   const activeUsersCount = users.filter(u => u.isActive).length;

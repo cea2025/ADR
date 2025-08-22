@@ -2,52 +2,28 @@ import { useState } from 'react';
 import PolicySelector from './PolicySelector';
 import InvestmentForm from './InvestmentForm';
 import ResultsDisplay from './ResultsDisplay';
-import { CalculationResults } from '../../types/policy.types';
+import { CalculationResults, CalculationInput } from '../../types/policy.types';
+import { calculateReturns } from '../../services/calculationEngine';
+import { usePoliciesStore } from '../../hooks/usePoliciesStore';
 
 const Calculator: React.FC = () => {
   const [results, setResults] = useState<CalculationResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const { policies } = usePoliciesStore();
 
-  const handleCalculate = async () => {
+  const handleCalculate = async (calculationInput: CalculationInput) => {
     setIsCalculating(true);
     try {
-      // כאן יהיה החישוב האמיתי
-      // כרגע נשתמש בנתונים לדוגמה
-      await new Promise(resolve => setTimeout(resolve, 1000)); // סימולציה של חישוב
+      // השהיה קצרה לחוויית משתמש
+      await new Promise(resolve => setTimeout(resolve, 800));
       
-      const mockResults: CalculationResults = {
-        totalPurchaseCost: 50000,
-        totalManagementFees: 2400,
-        totalOpeningCosts: 1500,
-        expectedReturns: {
-          individual: [],
-          average: {
-            totalReturn: 75000,
-            netProfit: 22600,
-            annualizedReturn: 12.5,
-            compoundReturn: 11.8,
-            totalReturnPercentage: 45.2,
-            timeToMaturity: 8
-          },
-          actual: {
-            totalReturn: 75000,
-            netProfit: 22600,
-            annualizedReturn: 12.5,
-            compoundReturn: 11.8,
-            totalReturnPercentage: 45.2,
-            timeToMaturity: 8
-          }
-        },
-        annualBreakdown: [],
-        currencyConversion: {
-          usdToIls: 3.65,
-          totalInILS: 182500
-        }
-      };
+      // חישוב אמיתי עם מנוע החישובים
+      const calculationResults = calculateReturns(policies, calculationInput);
       
-      setResults(mockResults);
+      setResults(calculationResults);
     } catch (error) {
       console.error('שגיאה בחישוב:', error);
+      alert(`שגיאה בחישוב: ${error instanceof Error ? error.message : 'שגיאה לא ידועה'}`);
     } finally {
       setIsCalculating(false);
     }
