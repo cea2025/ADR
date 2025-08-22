@@ -50,6 +50,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip chrome-extension and other unsupported schemes
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+
+  // Skip cross-origin requests that might cause issues
+  if (url.origin !== location.origin) {
+    return;
+  }
+
   // Handle different types of requests
   if (url.pathname === '/' || url.pathname === '/index.html') {
     // HTML - try cache first, then network
