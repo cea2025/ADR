@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADR Debug - Admin Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .debug-box { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; }
+        .error { background: #fee; border-color: #fcc; }
+        .success { background: #efe; border-color: #cfc; }
+        pre { background: #f8f8f8; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        button { background: #8B5A3C; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #C8956D; }
+    </style>
+</head>
+<body>
+    <h1>🔧 ADR Admin Panel Debug</h1>
+    
+    <div class="debug-box">
+        <h2>בדיקת חיבור למערכת</h2>
+        <button onclick="checkSystem()">בדוק מערכת</button>
+        <div id="system-status"></div>
+    </div>
+    
+    <div class="debug-box">
+        <h2>בדיקת פאנל ניהול</h2>
+        <button onclick="checkAdminPanel()">בדוק פאנל ניהול</button>
+        <div id="admin-status"></div>
+    </div>
+    
+    <div class="debug-box">
+        <h2>בדיקת State Management</h2>
+        <button onclick="checkStateManagement()">בדוק State</button>
+        <div id="state-status"></div>
+    </div>
+    
+    <div class="debug-box">
+        <h2>לוג שגיאות</h2>
+        <div id="error-log"></div>
+    </div>
+
+    <script>
+        const errorLog = document.getElementById('error-log');
+        
+        // Capture console errors
+        window.addEventListener('error', function(e) {
+            logError('JavaScript Error: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            logError('Promise Rejection: ' + e.reason);
+        });
+        
+        function logError(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            errorLog.innerHTML += `<div style="color: red; margin: 5px 0;">[${timestamp}] ${message}</div>`;
+        }
+        
+        function logSuccess(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            errorLog.innerHTML += `<div style="color: green; margin: 5px 0;">[${timestamp}] ✅ ${message}</div>`;
+        }
+        
+        function checkSystem() {
+            const statusDiv = document.getElementById('system-status');
+            statusDiv.innerHTML = '<p>בודק...</p>';
+            
+            try {
+                // Check if we're on the correct domain
+                const currentUrl = window.location.href;
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        <h3>✅ מערכת פעילה</h3>
+                        <p><strong>URL:</strong> ${currentUrl}</p>
+                        <p><strong>Protocol:</strong> ${window.location.protocol}</p>
+                        <p><strong>Host:</strong> ${window.location.host}</p>
+                    </div>
+                `;
+                logSuccess('System check passed');
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="error">❌ שגיאה: ${error.message}</div>`;
+                logError('System check failed: ' + error.message);
+            }
+        }
+        
+        function checkAdminPanel() {
+            const statusDiv = document.getElementById('admin-status');
+            statusDiv.innerHTML = '<p>בודק פאנל ניהול...</p>';
+            
+            try {
+                // Check localStorage for user type
+                const calculatorStorage = localStorage.getItem('adr-calculator-storage');
+                const policiesStorage = localStorage.getItem('adr-policies-storage');
+                
+                let userType = 'website';
+                if (calculatorStorage) {
+                    const data = JSON.parse(calculatorStorage);
+                    userType = data.state?.userType || 'website';
+                }
+                
+                statusDiv.innerHTML = `
+                    <div class="${userType === 'manager' ? 'success' : 'error'}">
+                        <h3>${userType === 'manager' ? '✅' : '❌'} סוג משתמש</h3>
+                        <p><strong>סוג נוכחי:</strong> ${userType}</p>
+                        <p><strong>גישה לניהול:</strong> ${userType === 'manager' ? 'כן' : 'לא'}</p>
+                        <p><strong>Calculator Storage:</strong> ${calculatorStorage ? 'קיים' : 'חסר'}</p>
+                        <p><strong>Policies Storage:</strong> ${policiesStorage ? 'קיים' : 'חסר'}</p>
+                        ${userType !== 'manager' ? '<p style="color: red;">💡 שנה סוג משתמש ל-"מנהל" כדי לגשת לפאנל הניהול</p>' : ''}
+                    </div>
+                `;
+                
+                if (userType === 'manager') {
+                    logSuccess('Admin panel access granted');
+                } else {
+                    logError('Admin panel access denied - user type: ' + userType);
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="error">❌ שגיאה: ${error.message}</div>`;
+                logError('Admin panel check failed: ' + error.message);
+            }
+        }
+        
+        function checkStateManagement() {
+            const statusDiv = document.getElementById('state-status');
+            statusDiv.innerHTML = '<p>בודק State Management...</p>';
+            
+            try {
+                // Check if stores are working
+                const policiesStorage = localStorage.getItem('adr-policies-storage');
+                const calculatorStorage = localStorage.getItem('adr-calculator-storage');
+                
+                let policiesCount = 0;
+                let selectedPoliciesCount = 0;
+                
+                if (policiesStorage) {
+                    const policiesData = JSON.parse(policiesStorage);
+                    policiesCount = policiesData.state?.policies?.length || 0;
+                }
+                
+                if (calculatorStorage) {
+                    const calculatorData = JSON.parse(calculatorStorage);
+                    selectedPoliciesCount = calculatorData.state?.selectedPolicies?.length || 0;
+                }
+                
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        <h3>✅ State Management</h3>
+                        <p><strong>פוליסות במערכת:</strong> ${policiesCount}</p>
+                        <p><strong>פוליסות נבחרות:</strong> ${selectedPoliciesCount}</p>
+                        <p><strong>Policies Store:</strong> ${policiesStorage ? 'פעיל' : 'לא פעיל'}</p>
+                        <p><strong>Calculator Store:</strong> ${calculatorStorage ? 'פעיל' : 'לא פעיל'}</p>
+                    </div>
+                `;
+                
+                logSuccess('State management working');
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="error">❌ שגיאה: ${error.message}</div>`;
+                logError('State management check failed: ' + error.message);
+            }
+        }
+        
+        // Auto-run checks on load
+        setTimeout(() => {
+            checkSystem();
+            checkAdminPanel();
+            checkStateManagement();
+        }, 1000);
+    </script>
+</body>
+</html>
