@@ -1,10 +1,10 @@
-ο»Ώimport React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Plus, Search, Edit, Trash2, DollarSign, 
   Calendar, Building2, User, Filter 
 } from 'lucide-react';
-import { SAMPLE_POLICIES } from '../../../constants/policies';
-import { LifeSettlementPolicy } from '../../../types/policy.types';
+import { SAMPLE_POLICIES } from '../../constants/policies';
+import { LifeSettlementPolicy } from '../../types/policy.types';
 
 const PolicyManagement: React.FC = () => {
   const [policies, setPolicies] = useState<LifeSettlementPolicy[]>(SAMPLE_POLICIES);
@@ -21,14 +21,14 @@ const PolicyManagement: React.FC = () => {
   const companies = [...new Set(policies.map(p => p.company))];
 
   const handleDeletePolicy = (policyId: string) => {
-    if (window.confirm('Χ”ΧΧ ΧΧªΧ” Χ‘ΧΧ•Χ— Χ©Χ‘Χ¨Χ¦Χ•Χ Χ ΧΧΧ—Χ•Χ§ Χ¤Χ•ΧΧ™Χ΅Χ” Χ–Χ•?')) {
+    if (window.confirm('δΰν ΰϊδ αθεη ωαψφεπκ μξηεχ τεμιρδ ζε?')) {
       setPolicies(policies.filter(p => p.id !== policyId));
     }
   };
 
   const formatAge = (age: number | { male: number; female: number }) => {
-    if (typeof age === 'number') return `${age} Χ©Χ Χ™Χ`;
-    return `${age.male}/${age.female} Χ©Χ Χ™Χ`;
+    if (typeof age === 'number') return `${age} ωπιν`;
+    return `${age.male}/${age.female} ωπιν`;
   };
 
   const formatCurrency = (amount: number) => {
@@ -51,15 +51,15 @@ const PolicyManagement: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-adr-brown">Χ Χ™Χ”Χ•Χ Χ¤Χ•ΧΧ™Χ΅Χ•Χª</h2>
-          <p className="text-gray-600">Χ Χ™Χ”Χ•Χ Χ•ΧΆΧ“Χ›Χ•Χ Χ¤Χ•ΧΧ™Χ΅Χ•Χª Life Settlements</p>
+          <h2 className="text-2xl font-bold text-adr-brown">πιδεμ τεμιρεϊ</h2>
+          <p className="text-gray-600">πιδεμ εςγλεο τεμιρεϊ Life Settlements</p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
           className="flex items-center space-x-2 space-x-reverse bg-adr-brown text-white px-4 py-2 rounded-lg hover:bg-adr-light-brown transition-colors"
         >
           <Plus className="w-4 h-4" />
-          <span>Χ”Χ•Χ΅Χ£ Χ¤Χ•ΧΧ™Χ΅Χ”</span>
+          <span>δερσ τεμιρδ</span>
         </button>
       </div>
 
@@ -68,7 +68,7 @@ const PolicyManagement: React.FC = () => {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-600 text-sm font-medium">Χ΅Χ”"Χ› Χ¤Χ•ΧΧ™Χ΅Χ•Χª</p>
+              <p className="text-blue-600 text-sm font-medium">ρδ"λ τεμιρεϊ</p>
               <p className="text-2xl font-bold text-blue-800">{policies.length}</p>
             </div>
             <Building2 className="w-8 h-8 text-blue-600" />
@@ -78,7 +78,7 @@ const PolicyManagement: React.FC = () => {
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-600 text-sm font-medium">Χ¤Χ•ΧΧ™Χ΅Χ•Χª Χ¤ΧΆΧ™ΧΧ•Χª</p>
+              <p className="text-green-600 text-sm font-medium">τεμιρεϊ τςιμεϊ</p>
               <p className="text-2xl font-bold text-green-800">{policies.length}</p>
             </div>
             <User className="w-8 h-8 text-green-600" />
@@ -88,7 +88,7 @@ const PolicyManagement: React.FC = () => {
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-yellow-600 text-sm font-medium">Χ΅Χ”"Χ› Χ”Χ©Χ§ΧΆΧ”</p>
+              <p className="text-yellow-600 text-sm font-medium">ρδ"λ δωχςδ</p>
               <p className="text-2xl font-bold text-yellow-800">
                 {formatCurrency(policies.reduce((sum, p) => sum + p.purchaseCost, 0))}
               </p>
@@ -100,8 +100,8 @@ const PolicyManagement: React.FC = () => {
         <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-600 text-sm font-medium">ΧΧΧ•Χ¦ΧΆ Χ’Χ™Χ</p>
-              <p className="text-2xl font-bold text-purple-800">{calculateAverageAge()} Χ©Χ Χ™Χ</p>
+              <p className="text-purple-600 text-sm font-medium">ξξεφς βιμ</p>
+              <p className="text-2xl font-bold text-purple-800">{calculateAverageAge()} ωπιν</p>
             </div>
             <Calendar className="w-8 h-8 text-purple-600" />
           </div>
@@ -116,7 +116,7 @@ const PolicyManagement: React.FC = () => {
               <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Χ—Χ™Χ¤Χ•Χ© Χ¤Χ•ΧΧ™Χ΅Χ”..."
+                placeholder="ηιτεω τεμιρδ..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-adr-brown focus:border-transparent"
@@ -132,7 +132,7 @@ const PolicyManagement: React.FC = () => {
                 onChange={(e) => setFilterCompany(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-adr-brown focus:border-transparent"
               >
-                <option value="">Χ›Χ Χ”Χ—Χ‘Χ¨Χ•Χª</option>
+                <option value="">λμ δηαψεϊ</option>
                 {companies.map(company => (
                   <option key={company} value={company}>{company}</option>
                 ))}
@@ -149,25 +149,25 @@ const PolicyManagement: React.FC = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Χ¤Χ•ΧΧ™Χ΅Χ”
+                  τεμιρδ
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Χ’Χ™Χ
+                  βιμ
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Χ—Χ‘Χ¨Χ”
+                  ηαψδ
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ΧΆΧΧ•Χª Χ¨Χ›Χ™Χ©Χ”
+                  ςμεϊ ψλιωδ
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ΧΆΧ¨Χ Χ Χ§Χ•Χ‘
+                  ςψκ πχεα
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Χ“Χ™Χ¨Χ•Χ’
+                  γιψεβ
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Χ¤ΧΆΧ•ΧΧ•Χª
+                  τςεμεϊ
                 </th>
               </tr>
             </thead>
@@ -176,7 +176,7 @@ const PolicyManagement: React.FC = () => {
                 <tr key={policy.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{policy.name}</div>
-                    <div className="text-xs text-green-600">Χ¤ΧΆΧ™Χ</div>
+                    <div className="text-xs text-green-600">τςιμ</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {formatAge(policy.age)}
@@ -204,14 +204,14 @@ const PolicyManagement: React.FC = () => {
                       <button
                         onClick={() => setEditingPolicy(policy)}
                         className="text-adr-brown hover:text-adr-light-brown"
-                        title="ΧΆΧ¨Χ™Χ›Χ”"
+                        title="ςψιλδ"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeletePolicy(policy.id)}
                         className="text-red-600 hover:text-red-800"
-                        title="ΧΧ—Χ™Χ§Χ”"
+                        title="ξηιχδ"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -227,7 +227,7 @@ const PolicyManagement: React.FC = () => {
       {filteredPolicies.length === 0 && (
         <div className="text-center py-8">
           <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500">ΧΧ Χ ΧΧ¦ΧΧ• Χ¤Χ•ΧΧ™Χ΅Χ•Χª Χ”ΧΧªΧΧ™ΧΧ•Χª ΧΧ—Χ™Χ¤Χ•Χ©</p>
+          <p className="text-gray-500">μΰ πξφΰε τεμιρεϊ δξϊΰιξεϊ μηιτεω</p>
         </div>
       )}
 
@@ -235,13 +235,13 @@ const PolicyManagement: React.FC = () => {
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-bold text-adr-brown mb-4">Χ”Χ•Χ΅Χ£ Χ¤Χ•ΧΧ™Χ΅Χ” Χ—Χ“Χ©Χ”</h3>
-            <p className="text-gray-600 mb-4">ΧΧ•Χ¤Χ΅ Χ”Χ•Χ΅Χ¤Χ” Χ™Χ”Χ™Χ” Χ–ΧΧ™Χ Χ‘Χ§Χ¨Χ•Χ‘</p>
+            <h3 className="text-lg font-bold text-adr-brown mb-4">δερσ τεμιρδ ηγωδ</h3>
+            <p className="text-gray-600 mb-4">θετρ δερτδ ιδιδ ζξιο αχψεα</p>
             <button
               onClick={() => setShowAddForm(false)}
               className="bg-adr-brown text-white px-4 py-2 rounded-lg hover:bg-adr-light-brown transition-colors"
             >
-              Χ΅Χ’Χ•Χ¨
+              ρβεψ
             </button>
           </div>
         </div>
@@ -251,13 +251,13 @@ const PolicyManagement: React.FC = () => {
       {editingPolicy && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-bold text-adr-brown mb-4">ΧΆΧ¨Χ™Χ›Χª {editingPolicy.name}</h3>
-            <p className="text-gray-600 mb-4">ΧΧ•Χ¤Χ΅ ΧΆΧ¨Χ™Χ›Χ” Χ™Χ”Χ™Χ” Χ–ΧΧ™Χ Χ‘Χ§Χ¨Χ•Χ‘</p>
+            <h3 className="text-lg font-bold text-adr-brown mb-4">ςψιλϊ {editingPolicy.name}</h3>
+            <p className="text-gray-600 mb-4">θετρ ςψιλδ ιδιδ ζξιο αχψεα</p>
             <button
               onClick={() => setEditingPolicy(null)}
               className="bg-adr-brown text-white px-4 py-2 rounded-lg hover:bg-adr-light-brown transition-colors"
             >
-              Χ΅Χ’Χ•Χ¨
+              ρβεψ
             </button>
           </div>
         </div>
