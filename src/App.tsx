@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+﻿import { lazy, Suspense, useState } from 'react';
 import Layout from './components/UI/Layout'
 import Header from './components/UI/Header'
 import MobileBottomNav from './components/UI/MobileBottomNav'
@@ -14,15 +14,23 @@ import { usePerformanceMonitor } from './hooks/usePerformanceMonitor'
 
 // Lazy loading לקומפוננטות כבדות
 const Calculator = lazy(() => import('./components/Calculator'));
+const AdminDashboard = lazy(() => import('./components/Admin/AdminDashboard'));
 
 function App() {
   // Performance monitoring
   usePerformanceMonitor();
   
+  // Admin state management
+  const [showAdmin, setShowAdmin] = useState(false);
+  
   const handleRefresh = async () => {
     // כאן יהיה רענון שער חליפין או נתונים אחרים
     console.log('Refreshing...');
     await new Promise(resolve => setTimeout(resolve, 1000)); // סימולציה
+  };
+
+  const handleAdminToggle = () => {
+    setShowAdmin(!showAdmin);
   };
 
   return (
@@ -33,7 +41,7 @@ function App() {
             <SkipLink />
             <UpdateNotification />
             <OfflineIndicator />
-            <Header />
+            <Header onAdminToggle={handleAdminToggle} showAdmin={showAdmin} />
             <PullToRefresh onRefresh={handleRefresh}>
               <main id="main-content" className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
                 <Suspense fallback={
@@ -41,7 +49,7 @@ function App() {
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-adr-brown"></div>
                   </div>
                 }>
-                  <Calculator />
+                  {showAdmin ? <AdminDashboard /> : <Calculator />}
                 </Suspense>
               </main>
             </PullToRefresh>
