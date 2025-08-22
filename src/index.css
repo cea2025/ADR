@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Heebo', 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  /* תמיכה בשפות מעורבות */
+  .english-text {
+    direction: ltr;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .hebrew-text {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Heebo', sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-adr-light-brown to-adr-bronze 
+           text-white px-6 md:px-8 py-3 md:py-3 rounded-full font-semibold
+           hover:from-adr-bronze hover:to-adr-light-brown
+           transition-all duration-300 shadow-lg
+           min-h-[48px] active:scale-95;
+  }
+  
+  .card-policy {
+    @apply bg-adr-brown rounded-lg p-4 md:p-6 text-white shadow-lg border border-adr-gold;
+  }
+  
+  .metric-card {
+    @apply bg-adr-brown rounded-lg p-4 md:p-6 text-center;
+  }
+  
+  .input-field {
+    @apply border-2 border-adr-brown rounded-lg px-4 py-3 md:py-2 
+           focus:ring-2 focus:ring-adr-gold focus:border-transparent
+           bg-adr-cream text-adr-brown placeholder-adr-light-brown
+           text-lg md:text-base;
+  }
+  
+  .touch-button {
+    @apply min-h-[48px] px-6 py-3 md:py-2 rounded-lg font-semibold
+           transition-all duration-200 active:scale-95;
+  }
+  
+  .mobile-only {
+    @apply block md:hidden;
+  }
+  
+  .desktop-only {
+    @apply hidden md:block;
+  }
+}
+
+/* Mobile-specific styles */
+@media screen and (max-width: 768px) {
+  input[type="number"],
+  input[type="text"],
+  input[type="email"],
+  select,
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Touch-friendly scroll bars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8B5A3C;
+  border-radius: 4px;
+}
+
+/* Safe area for devices with notch */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Prevent text selection on touch */
+.no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Accessibility Styles */
+.high-contrast {
+  --adr-brown: #000000;
+  --adr-gold: #ffffff;
+  --adr-light-brown: #333333;
+  --adr-cream: #ffffff;
+  --adr-bronze: #666666;
+}
+
+.large-text {
+  font-size: 1.2em;
+}
+
+.large-text h1 { font-size: 2.4em; }
+.large-text h2 { font-size: 2.0em; }
+.large-text h3 { font-size: 1.8em; }
+.large-text h4 { font-size: 1.6em; }
+.large-text p { font-size: 1.4em; }
+.large-text button { font-size: 1.3em; }
+.large-text input { font-size: 1.3em; }
+
+.reduced-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Focus styles for accessibility */
+*:focus {
+  outline: 3px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* Skip link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000000;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

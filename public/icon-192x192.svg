@@ -1,0 +1,31 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5A3C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D4A574;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="192" height="192" rx="24" fill="url(#grad1)"/>
+  
+  <!-- ADR Text -->
+  <text x="96" y="80" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="white">ADR</text>
+  
+  <!-- Calculator Icon -->
+  <rect x="60" y="100" width="72" height="48" rx="8" fill="white" opacity="0.9"/>
+  <rect x="68" y="108" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  <rect x="84" y="108" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  <rect x="100" y="108" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  <rect x="116" y="108" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  
+  <rect x="68" y="124" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  <rect x="84" y="124" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  <rect x="100" y="124" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  <rect x="116" y="124" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  
+  <rect x="68" y="140" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  <rect x="84" y="140" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  <rect x="100" y="140" width="8" height="8" rx="2" fill="#8B5A3C"/>
+  <rect x="116" y="140" width="8" height="8" rx="2" fill="#8B5A3C"/>
+</svg>

@@ -1,0 +1,54 @@
+{
+  "name": "ADR Life Settlements Calculator",
+  "short_name": "ADR Calculator",
+  "description": "מחשבון מתקדם לחישוב תשואות Life Settlements",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F5F5",
+  "theme_color": "#8B5A3C",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "he",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["finance", "business", "utilities"],
+
+  "shortcuts": [
+    {
+      "name": "חישוב מהיר",
+      "short_name": "חישוב",
+      "description": "חישוב מהיר של תשואה",
+      "url": "/?shortcut=quick-calc",
+      "icons": [
+        {
+          "src": "/icon-192x192.svg",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "היסטוריה",
+      "short_name": "היסטוריה",
+      "description": "צפייה בהיסטוריית חישובים",
+      "url": "/?shortcut=history",
+      "icons": [
+        {
+          "src": "/icon-192x192.svg",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
