@@ -6,14 +6,14 @@ import {
   InvestmentSelection
 } from '../types/policy.types';
 import { UserType } from '../types/user.types';
-import { SAMPLE_POLICIES, DEFAULT_EXCHANGE_RATE } from '../constants/policies';
+import { DEFAULT_EXCHANGE_RATE } from '../constants/policies';
+import { usePoliciesStore } from './usePoliciesStore';
 
 interface CalculatorStore {
   // State
   selectedPolicies: InvestmentSelection[];
   userType: UserType;
   exchangeRate: number;
-  policies: LifeSettlementPolicy[];
   
   // Actions
   addPolicy: (policy: InvestmentSelection) => void;
@@ -35,7 +35,6 @@ const useCalculatorStore = create<CalculatorStore>()(
       selectedPolicies: [],
       userType: 'website',
       exchangeRate: DEFAULT_EXCHANGE_RATE,
-      policies: SAMPLE_POLICIES,
       
       // Actions
       addPolicy: (policy) => {
@@ -78,17 +77,19 @@ const useCalculatorStore = create<CalculatorStore>()(
       
       // Computed
       getSelectedPoliciesData: () => {
-        const { selectedPolicies, policies } = get();
+        const { selectedPolicies } = get();
+        const policiesStore = usePoliciesStore.getState();
         return selectedPolicies.map(selection => {
-          const policy = policies.find(p => p.id === selection.policyId);
+          const policy = policiesStore.policies.find(p => p.id === selection.policyId);
           return policy!;
-        });
+        }).filter(Boolean);
       },
       
       getTotalInvestment: () => {
-        const { selectedPolicies, policies } = get();
+        const { selectedPolicies } = get();
+        const policiesStore = usePoliciesStore.getState();
         return selectedPolicies.reduce((total, selection) => {
-          const policy = policies.find(p => p.id === selection.policyId);
+          const policy = policiesStore.policies.find(p => p.id === selection.policyId);
           return total + (policy?.purchaseCost || 0) * selection.units;
         }, 0);
       }

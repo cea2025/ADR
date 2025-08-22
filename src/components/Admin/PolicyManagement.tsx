@@ -3,12 +3,20 @@ import {
   Plus, Search, Edit, Trash2, DollarSign, 
   Calendar, Building2, User, Filter 
 } from 'lucide-react';
-import { SAMPLE_POLICIES } from '../../constants/policies';
 import { LifeSettlementPolicy } from '../../types/policy.types';
+import { usePoliciesStore } from '../../hooks/usePoliciesStore';
 import PolicyForm from './PolicyForm';
 
 const PolicyManagement: React.FC = () => {
-  const [policies, setPolicies] = useState<LifeSettlementPolicy[]>(SAMPLE_POLICIES);
+  const { 
+    policies, 
+    addPolicy, 
+    updatePolicy, 
+    deletePolicy,
+    getTotalValue,
+    getAverageAge,
+    getActivePolicies
+  } = usePoliciesStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<LifeSettlementPolicy | null>(null);
@@ -30,21 +38,17 @@ const PolicyManagement: React.FC = () => {
   const handleDeletePolicy = (policyId: string) => {
     const policy = policies.find(p => p.id === policyId);
     if (window.confirm(`האם אתה בטוח שברצונך למחוק את פוליסת "${policy?.name}"?`)) {
-      setPolicies(policies.filter(p => p.id !== policyId));
+      deletePolicy(policyId);
     }
   };
 
   const handleAddPolicy = (newPolicy: Omit<LifeSettlementPolicy, 'id'>) => {
-    const policy: LifeSettlementPolicy = {
-      ...newPolicy,
-      id: `policy-${Date.now()}`
-    };
-    setPolicies([...policies, policy]);
+    addPolicy(newPolicy);
     setShowAddForm(false);
   };
 
   const handleUpdatePolicy = (updatedPolicy: LifeSettlementPolicy) => {
-    setPolicies(policies.map(p => p.id === updatedPolicy.id ? updatedPolicy : p));
+    updatePolicy(updatedPolicy.id, updatedPolicy);
     setEditingPolicy(null);
   };
 
@@ -60,21 +64,7 @@ const PolicyManagement: React.FC = () => {
     }).format(amount);
   };
 
-  const getAverageAge = () => {
-    if (policies.length === 0) return 0;
-    return Math.round(policies.reduce((sum, p) => {
-      const age = typeof p.age === 'number' ? p.age : (p.age.male + p.age.female) / 2;
-      return sum + age;
-    }, 0) / policies.length);
-  };
-
-  const getTotalInvestment = () => {
-    return policies.reduce((sum, p) => sum + p.purchaseCost, 0);
-  };
-
-  const getActivePoliciesCount = () => {
-    return policies.filter(p => p.isActive !== false).length;
-  };
+  const activePoliciesCount = getActivePolicies().length;
 
   return (
     <div className="space-y-6">
@@ -109,7 +99,7 @@ const PolicyManagement: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-600 text-sm font-medium">פוליסות פעילות</p>
-              <p className="text-2xl font-bold text-green-800">{getActivePoliciesCount()}</p>
+              <p className="text-2xl font-bold text-green-800">{activePoliciesCount}</p>
             </div>
             <User className="w-8 h-8 text-green-600" />
           </div>
@@ -120,7 +110,7 @@ const PolicyManagement: React.FC = () => {
             <div>
               <p className="text-yellow-600 text-sm font-medium">סה"כ השקעה</p>
               <p className="text-2xl font-bold text-yellow-800">
-                {formatCurrency(getTotalInvestment())}
+                {formatCurrency(getTotalValue())}
               </p>
             </div>
             <DollarSign className="w-8 h-8 text-yellow-600" />

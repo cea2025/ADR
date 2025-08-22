@@ -2,17 +2,18 @@
 import { useState } from 'react';
 import { Box, DollarSign, Calendar, Building2, Star } from 'lucide-react';
 import { useCalculator } from '../../hooks/useCalculator';
-import { SAMPLE_POLICIES } from '../../constants/policies';
+import { usePoliciesStore } from '../../hooks/usePoliciesStore';
 import { useSwipeable } from 'react-swipeable';
 
 const PolicySelector: React.FC = () => {
   const { selectedPolicies, addPolicy, removePolicy, updatePolicyUnits } = useCalculator();
+  const { policies } = usePoliciesStore();
   const [currentPolicyIndex, setCurrentPolicyIndex] = useState(0);
 
   // Swipe handlers for mobile
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => {
-      setCurrentPolicyIndex((prev: number) => Math.min(prev + 1, SAMPLE_POLICIES.length - 1));
+      setCurrentPolicyIndex((prev: number) => Math.min(prev + 1, policies.length - 1));
     },
     onSwipedRight: () => {
       setCurrentPolicyIndex((prev: number) => Math.max(prev - 1, 0));
@@ -67,7 +68,7 @@ const PolicySelector: React.FC = () => {
 
       {/* Desktop Grid View */}
       <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-        {SAMPLE_POLICIES.map((policy) => {
+        {policies.filter(p => p.isActive !== false).map((policy) => {
           const isSelected = getSelectedPolicy(policy.id);
           const selectedUnits = isSelected?.units || 0;
 
@@ -196,12 +197,12 @@ const PolicySelector: React.FC = () => {
         <div className="relative">
           <div className="text-center mb-4">
             <span className="text-sm text-adr-light-brown">
-              {currentPolicyIndex + 1} מתוך {SAMPLE_POLICIES.length}
+              {currentPolicyIndex + 1} מתוך {policies.filter(p => p.isActive !== false).length}
             </span>
           </div>
           
           <div className="relative">
-            {SAMPLE_POLICIES.map((policy, index) => {
+            {policies.filter(p => p.isActive !== false).map((policy, index) => {
               const isSelected = getSelectedPolicy(policy.id);
               const selectedUnits = isSelected?.units || 0;
               const isActive = index === currentPolicyIndex;

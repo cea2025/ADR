@@ -103,14 +103,18 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ policy, onSave, onCancel, title
         : { male: formData.maleAge, female: formData.femaleAge },
       coupleType: formData.coupleType,
       insuranceCompany: formData.insuranceCompany.trim(),
-      companyRating: formData.companyRating,
+      companyRating: formData.companyRating as 'A' | 'A+' | 'AA' | 'AA+' | 'AAA',
       faceValue: formData.faceValue,
       purchaseCost: formData.purchaseCost,
       lifeExpectancy: formData.lifeExpectancy,
-      isActive: formData.isActive
+      isActive: formData.isActive,
+      // Add required fields with default values
+      openingCost: 5000, // Default opening cost
+      monthlyManagementFee: 50, // Default monthly fee
+      monthlyPremium: 200 // Default monthly premium
     };
 
-    onSave(policyData as any);
+    onSave(policyData);
   };
 
   const handleInputChange = (field: string, value: any) => {

@@ -1,11 +1,17 @@
 ﻿import React, { useState } from 'react';
 import { 
   Users, Settings, Shield, Activity, 
-  BarChart3, FileText, DollarSign, TrendingUp 
+  BarChart3, FileText, DollarSign, TrendingUp, Calendar 
 } from 'lucide-react';
 import { useCalculator } from '../../hooks/useCalculator';
 import { hasPermission } from '../../types/user.types';
+import { usePoliciesStore } from '../../hooks/usePoliciesStore';
 import PolicyManagement from './PolicyManagement';
+import UserManagement from './UserManagement';
+import SystemSettings from './SystemSettings';
+import ActivityLog from './ActivityLog';
+import PermissionSettings from './PermissionSettings';
+import Statistics from './Statistics';
 
 
 
@@ -34,12 +40,12 @@ const AdminDashboard: React.FC = () => {
 
   const tabs: AdminTab[] = [
     { id: 'dashboard', label: 'לוח בקרה', icon: BarChart3, component: DashboardOverview },
-    { id: 'users', label: 'ניהול משתמשים', icon: Users, component: PlaceholderComponent },
-    { id: 'permissions', label: 'הרשאות', icon: Shield, component: PlaceholderComponent },
+    { id: 'users', label: 'ניהול משתמשים', icon: Users, component: UserManagement },
+    { id: 'permissions', label: 'הרשאות', icon: Shield, component: PermissionSettings },
     { id: 'policies', label: 'ניהול פוליסות', icon: FileText, component: PolicyManagement },
-    { id: 'settings', label: 'הגדרות מערכת', icon: Settings, component: PlaceholderComponent },
-    { id: 'activity', label: 'לוג פעילות', icon: Activity, component: PlaceholderComponent },
-    { id: 'statistics', label: 'סטטיסטיקות', icon: TrendingUp, component: PlaceholderComponent }
+    { id: 'settings', label: 'הגדרות מערכת', icon: Settings, component: SystemSettings },
+    { id: 'activity', label: 'לוג פעילות', icon: Activity, component: ActivityLog },
+    { id: 'statistics', label: 'סטטיסטיקות', icon: TrendingUp, component: Statistics }
   ];
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component || DashboardOverview;
@@ -94,46 +100,48 @@ const AdminDashboard: React.FC = () => {
 };
 
 const DashboardOverview: React.FC = () => {
+  const { policies, getTotalValue, getAverageAge, getActivePolicies } = usePoliciesStore();
+  
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100">סה"כ משתמשים</p>
-              <p className="text-2xl font-bold">1,247</p>
+              <p className="text-blue-100">סה"כ פוליסות</p>
+              <p className="text-2xl font-bold">{policies.length}</p>
             </div>
-            <Users className="w-8 h-8 text-blue-200" />
+            <FileText className="w-8 h-8 text-blue-200" />
           </div>
         </div>
 
         <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-100">חישובים היום</p>
-              <p className="text-2xl font-bold">89</p>
+              <p className="text-green-100">פוליסות פעילות</p>
+              <p className="text-2xl font-bold">{getActivePolicies().length}</p>
             </div>
-            <BarChart3 className="w-8 h-8 text-green-200" />
+            <Users className="w-8 h-8 text-green-200" />
           </div>
         </div>
 
         <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-yellow-100">פוליסות פעילות</p>
-              <p className="text-2xl font-bold">156</p>
+              <p className="text-yellow-100">סה"כ השקעה</p>
+              <p className="text-2xl font-bold">${(getTotalValue() / 1000000).toFixed(1)}M</p>
             </div>
-            <FileText className="w-8 h-8 text-yellow-200" />
+            <DollarSign className="w-8 h-8 text-yellow-200" />
           </div>
         </div>
 
         <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-100">סה"כ השקעות</p>
-              <p className="text-2xl font-bold">$2.4M</p>
+              <p className="text-purple-100">ממוצע גיל</p>
+              <p className="text-2xl font-bold">{getAverageAge()} שנים</p>
             </div>
-            <DollarSign className="w-8 h-8 text-purple-200" />
+            <Calendar className="w-8 h-8 text-purple-200" />
           </div>
         </div>
       </div>
@@ -196,17 +204,7 @@ const DashboardOverview: React.FC = () => {
   );
 };
 
-const PlaceholderComponent: React.FC = () => {
-  return (
-    <div className="flex items-center justify-center h-64">
-      <div className="text-center">
-        <Settings className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-600 mb-2">בבניה</h3>
-        <p className="text-gray-500">תכונה זו תהיה זמינה בקרוב</p>
-      </div>
-    </div>
-  );
-};
+
 
 export default AdminDashboard;
 
