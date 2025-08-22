@@ -13,6 +13,7 @@ export interface LifeSettlementPolicy {
   monthlyPremium: number; // פרמיה חודשית (דולר)
   managementDiscount?: number; // הנחת דמי ניהול (סכום קבוע)
   openingDiscount?: number; // הנחת פתיחת תיק (סכום קבוע)
+  isActive?: boolean; // האם הפוליסה פעילה
 }
 
 export interface InvestmentSelection {

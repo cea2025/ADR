@@ -5,9 +5,7 @@ import {
 } from 'lucide-react';
 import { useCalculator } from '../../hooks/useCalculator';
 import { hasPermission } from '../../types/user.types';
-
-// Import PolicyManagement component
-const PolicyManagement = React.lazy(() => import('./PolicyManagement'));
+import PolicyManagement from './PolicyManagement';
 
 
 
@@ -38,7 +36,7 @@ const AdminDashboard: React.FC = () => {
     { id: 'dashboard', label: 'לוח בקרה', icon: BarChart3, component: DashboardOverview },
     { id: 'users', label: 'ניהול משתמשים', icon: Users, component: PlaceholderComponent },
     { id: 'permissions', label: 'הרשאות', icon: Shield, component: PlaceholderComponent },
-    { id: 'policies', label: 'ניהול פוליסות', icon: FileText, component: () => React.createElement(React.Suspense, { fallback: React.createElement('div', { className: 'flex justify-center p-4' }, 'טוען...') }, React.createElement(PolicyManagement)) },
+    { id: 'policies', label: 'ניהול פוליסות', icon: FileText, component: PolicyManagement },
     { id: 'settings', label: 'הגדרות מערכת', icon: Settings, component: PlaceholderComponent },
     { id: 'activity', label: 'לוג פעילות', icon: Activity, component: PlaceholderComponent },
     { id: 'statistics', label: 'סטטיסטיקות', icon: TrendingUp, component: PlaceholderComponent }

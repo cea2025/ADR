@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { SAMPLE_POLICIES } from '../../constants/policies';
 import { LifeSettlementPolicy } from '../../types/policy.types';
+import PolicyForm from './PolicyForm';
 
 const PolicyManagement: React.FC = () => {
   const [policies, setPolicies] = useState<LifeSettlementPolicy[]>(SAMPLE_POLICIES);
@@ -12,18 +13,39 @@ const PolicyManagement: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<LifeSettlementPolicy | null>(null);
   const [filterCompany, setFilterCompany] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
 
-  const filteredPolicies = policies.filter(policy => 
-    policy.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (filterCompany === '' || policy.insuranceCompany === filterCompany)
-  );
+  const filteredPolicies = policies.filter(policy => {
+    const matchesSearch = policy.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCompany = filterCompany === '' || policy.insuranceCompany === filterCompany;
+    const matchesStatus = filterStatus === 'all' || 
+      (filterStatus === 'active' && policy.isActive !== false) ||
+      (filterStatus === 'inactive' && policy.isActive === false);
+    
+    return matchesSearch && matchesCompany && matchesStatus;
+  });
 
   const companies = [...new Set(policies.map(p => p.insuranceCompany))];
 
   const handleDeletePolicy = (policyId: string) => {
-    if (window.confirm('האם אתה בטוח שברצונך למחוק פוליסה זו?')) {
+    const policy = policies.find(p => p.id === policyId);
+    if (window.confirm(`האם אתה בטוח שברצונך למחוק את פוליסת "${policy?.name}"?`)) {
       setPolicies(policies.filter(p => p.id !== policyId));
     }
+  };
+
+  const handleAddPolicy = (newPolicy: Omit<LifeSettlementPolicy, 'id'>) => {
+    const policy: LifeSettlementPolicy = {
+      ...newPolicy,
+      id: `policy-${Date.now()}`
+    };
+    setPolicies([...policies, policy]);
+    setShowAddForm(false);
+  };
+
+  const handleUpdatePolicy = (updatedPolicy: LifeSettlementPolicy) => {
+    setPolicies(policies.map(p => p.id === updatedPolicy.id ? updatedPolicy : p));
+    setEditingPolicy(null);
   };
 
   const formatAge = (age: number | { male: number; female: number }) => {
@@ -38,8 +60,25 @@ const PolicyManagement: React.FC = () => {
     }).format(amount);
   };
 
+  const getAverageAge = () => {
+    if (policies.length === 0) return 0;
+    return Math.round(policies.reduce((sum, p) => {
+      const age = typeof p.age === 'number' ? p.age : (p.age.male + p.age.female) / 2;
+      return sum + age;
+    }, 0) / policies.length);
+  };
+
+  const getTotalInvestment = () => {
+    return policies.reduce((sum, p) => sum + p.purchaseCost, 0);
+  };
+
+  const getActivePoliciesCount = () => {
+    return policies.filter(p => p.isActive !== false).length;
+  };
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-adr-brown">ניהול פוליסות</h2>
@@ -50,10 +89,11 @@ const PolicyManagement: React.FC = () => {
           className="flex items-center space-x-2 space-x-reverse bg-adr-brown text-white px-4 py-2 rounded-lg hover:bg-adr-light-brown transition-colors"
         >
           <Plus className="w-4 h-4" />
-          <span>הוסף פוליסה</span>
+          <span>הוסף פוליסה חדשה</span>
         </button>
       </div>
 
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
@@ -69,7 +109,7 @@ const PolicyManagement: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-600 text-sm font-medium">פוליסות פעילות</p>
-              <p className="text-2xl font-bold text-green-800">{policies.length}</p>
+              <p className="text-2xl font-bold text-green-800">{getActivePoliciesCount()}</p>
             </div>
             <User className="w-8 h-8 text-green-600" />
           </div>
@@ -80,7 +120,7 @@ const PolicyManagement: React.FC = () => {
             <div>
               <p className="text-yellow-600 text-sm font-medium">סה"כ השקעה</p>
               <p className="text-2xl font-bold text-yellow-800">
-                {formatCurrency(policies.reduce((sum, p) => sum + p.purchaseCost, 0))}
+                {formatCurrency(getTotalInvestment())}
               </p>
             </div>
             <DollarSign className="w-8 h-8 text-yellow-600" />
@@ -91,15 +131,14 @@ const PolicyManagement: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-purple-600 text-sm font-medium">ממוצע גיל</p>
-              <p className="text-2xl font-bold text-purple-800">
-                {Math.round(policies.reduce((sum, p) => sum + (typeof p.age === 'number' ? p.age : (p.age.male + p.age.female) / 2), 0) / policies.length)} שנים
-              </p>
+              <p className="text-2xl font-bold text-purple-800">{getAverageAge()} שנים</p>
             </div>
             <Calendar className="w-8 h-8 text-purple-600" />
           </div>
         </div>
       </div>
 
+      {/* Search and Filters */}
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
@@ -107,7 +146,7 @@ const PolicyManagement: React.FC = () => {
               <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="חיפוש פוליסה..."
+                placeholder="חיפוש פוליסה לפי שם..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-adr-brown focus:border-transparent"
@@ -130,21 +169,68 @@ const PolicyManagement: React.FC = () => {
               </select>
             </div>
           </div>
+
+          <div className="md:w-40">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-adr-brown focus:border-transparent"
+            >
+              <option value="all">כל הסטטוסים</option>
+              <option value="active">פעיל</option>
+              <option value="inactive">לא פעיל</option>
+            </select>
+          </div>
         </div>
       </div>
 
+      {/* Results Summary */}
+      <div className="flex items-center justify-between text-sm text-gray-600">
+        <span>מציג {filteredPolicies.length} מתוך {policies.length} פוליסות</span>
+        {(searchTerm || filterCompany || filterStatus !== 'all') && (
+          <button
+            onClick={() => {
+              setSearchTerm('');
+              setFilterCompany('');
+              setFilterStatus('all');
+            }}
+            className="text-adr-brown hover:text-adr-light-brown"
+          >
+            נקה מסננים
+          </button>
+        )}
+      </div>
+
+      {/* Policies Table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">פוליסה</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">גיל</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">חברה</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">עלות רכישה</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">ערך נקוב</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">דירוג</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">פעולות</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  פוליסה
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  גיל
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  חברת ביטוח
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  עלות רכישה
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ערך נקוב
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  דירוג
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  סטטוס
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  פעולות
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -152,7 +238,7 @@ const PolicyManagement: React.FC = () => {
                 <tr key={policy.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{policy.name}</div>
-                    <div className="text-xs text-green-600">פעיל</div>
+                    <div className="text-xs text-gray-500">ID: {policy.id}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {formatAge(policy.age)}
@@ -167,8 +253,19 @@ const PolicyManagement: React.FC = () => {
                     {formatCurrency(policy.faceValue)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      policy.companyRating === 'AAA' ? 'bg-green-100 text-green-800' :
+                      policy.companyRating.startsWith('AA') ? 'bg-blue-100 text-blue-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
                       {policy.companyRating}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      policy.isActive !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {policy.isActive !== false ? 'פעיל' : 'לא פעיל'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -176,12 +273,14 @@ const PolicyManagement: React.FC = () => {
                       <button
                         onClick={() => setEditingPolicy(policy)}
                         className="text-adr-brown hover:text-adr-light-brown"
+                        title="עריכה"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeletePolicy(policy.id)}
                         className="text-red-600 hover:text-red-800"
+                        title="מחיקה"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -197,38 +296,27 @@ const PolicyManagement: React.FC = () => {
       {filteredPolicies.length === 0 && (
         <div className="text-center py-8">
           <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500">לא נמצאו פוליסות</p>
+          <p className="text-gray-500">לא נמצאו פוליסות המתאימות לחיפוש</p>
         </div>
       )}
 
+      {/* Add Form Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-bold text-adr-brown mb-4">הוסף פוליסה חדשה</h3>
-            <p className="text-gray-600 mb-4">טופס הוספה יהיה זמין בקרוב</p>
-            <button
-              onClick={() => setShowAddForm(false)}
-              className="bg-adr-brown text-white px-4 py-2 rounded-lg hover:bg-adr-light-brown transition-colors"
-            >
-              סגור
-            </button>
-          </div>
-        </div>
+        <PolicyForm
+          onSave={handleAddPolicy}
+          onCancel={() => setShowAddForm(false)}
+          title="הוסף פוליסה חדשה"
+        />
       )}
 
+      {/* Edit Form Modal */}
       {editingPolicy && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-bold text-adr-brown mb-4">עריכת {editingPolicy.name}</h3>
-            <p className="text-gray-600 mb-4">טופס עריכה יהיה זמין בקרוב</p>
-            <button
-              onClick={() => setEditingPolicy(null)}
-              className="bg-adr-brown text-white px-4 py-2 rounded-lg hover:bg-adr-light-brown transition-colors"
-            >
-              סגור
-            </button>
-          </div>
-        </div>
+        <PolicyForm
+          policy={editingPolicy}
+          onSave={handleUpdatePolicy}
+          onCancel={() => setEditingPolicy(null)}
+          title={`עריכת ${editingPolicy.name}`}
+        />
       )}
     </div>
   );
