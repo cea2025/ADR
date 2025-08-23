@@ -113,10 +113,22 @@ export class CalculationEngine {
       );
     });
     
-    // חישוב סיכומים
+    // חישוב סיכומים - עלות רכישה בלבד
     const totalPurchaseCost = selectedPolicies.reduce((sum, selection) => {
       const policy = policies.find(p => p.id === selection.policyId);
       return sum + (policy?.purchaseCost || 0) * selection.units;
+    }, 0);
+    
+    // חישוב פרמיות חודשיות לכל הפוליסות
+    const totalMonthlyPremiums = selectedPolicies.reduce((sum, selection) => {
+      const policy = policies.find(p => p.id === selection.policyId);
+      if (!policy) return sum;
+      
+      const adjustedLE = this.getAdjustedLE(policy.lifeExpectancy, leCalculationMethod);
+      const monthsToMaturity = adjustedLE * 12;
+      const premiums = policy.monthlyPremium * selection.units * monthsToMaturity;
+      
+      return sum + premiums;
     }, 0);
     
     const totalManagementFees = includeCostsInReturn.managementFees 
@@ -151,8 +163,8 @@ export class CalculationEngine {
         }, 0)
       : 0;
     
-    // חישוב ממוצעים משוקללים
-    const totalInvestment = totalPurchaseCost + totalManagementFees + totalOpeningCosts;
+    // חישוב ממוצעים משוקללים - כולל את כל העלויות
+    const totalInvestment = totalPurchaseCost + totalMonthlyPremiums + totalManagementFees + totalOpeningCosts;
     const totalFaceValue = individualReturns.reduce((sum, ret) => sum + ret.totalReturn, 0);
     const totalNetProfit = individualReturns.reduce((sum, ret) => sum + ret.netProfit, 0);
     
@@ -194,8 +206,10 @@ export class CalculationEngine {
     
     return {
       totalPurchaseCost,
+      totalMonthlyPremiums,
       totalManagementFees,
       totalOpeningCosts,
+      totalInvestment,
       expectedReturns: {
         individual: individualReturns,
         average: averageReturn,

@@ -51,8 +51,10 @@ export interface AnnualReturn {
 
 export interface CalculationResults {
   totalPurchaseCost: number;
+  totalMonthlyPremiums: number;
   totalManagementFees: number;
   totalOpeningCosts: number;
+  totalInvestment: number;
   expectedReturns: {
     individual: PolicyReturn[]; // תשואה לכל פוליסה
     average: PolicyReturn; // ממוצע כל הפוליסות

@@ -95,6 +95,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
               </span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-adr-cream">
+              <span className="text-adr-light-brown text-sm md:text-base">עלויות פרמיות</span>
+              <span className="font-semibold text-adr-brown text-sm md:text-base">
+                {formatCurrency(results.totalMonthlyPremiums)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-adr-cream">
               <span className="text-adr-light-brown text-sm md:text-base">דמי ניהול</span>
               <span className="font-semibold text-adr-brown text-sm md:text-base">
                 {formatCurrency(results.totalManagementFees)}
@@ -109,7 +115,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
             <div className="flex justify-between items-center py-3 bg-adr-cream rounded-lg px-3 md:px-4">
               <span className="font-bold text-adr-brown text-sm md:text-base">סה"כ עלויות</span>
               <span className="font-bold text-adr-brown text-sm md:text-base">
-                {formatCurrency(results.totalPurchaseCost + results.totalManagementFees + results.totalOpeningCosts)}
+                {formatCurrency(results.totalInvestment)}
               </span>
             </div>
           </div>
@@ -160,13 +166,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
           <div>
             <p className="text-adr-light-brown text-xs md:text-sm mb-2">השקעה בדולרים</p>
             <p className="text-xl md:text-2xl font-bold text-adr-brown">
-              {formatCurrency(results.totalPurchaseCost)}
+              {formatCurrency(results.totalInvestment)}
             </p>
           </div>
           <div>
             <p className="text-adr-light-brown text-xs md:text-sm mb-2">השקעה בשקלים</p>
             <p className="text-xl md:text-2xl font-bold text-adr-brown">
-              {formatCurrency(results.currencyConversion.totalInILS, 'ILS')}
+              {formatCurrency(results.totalInvestment * results.currencyConversion.usdToIls, 'ILS')}
             </p>
           </div>
         </div>
