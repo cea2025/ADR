@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Calculator, Settings, DollarSign } from 'lucide-react';
 import { useCalculator } from '../../hooks/useCalculator';
 import { hasPermission } from '../../types/user.types';
+import ExchangeRateDisplay from '../UI/ExchangeRateDisplay';
 
 interface InvestmentFormProps {
   onCalculate: (input: any) => void;
@@ -47,6 +48,12 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onCalculate, isCalculat
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Exchange Rate Display */}
+        <ExchangeRateDisplay 
+          onRateChange={setExchangeRate}
+          className="mb-6"
+        />
+
         {/* Investment Summary */}
         <div className="bg-adr-cream rounded-lg p-4 md:p-6">
           <h4 className="text-base md:text-lg font-semibold text-adr-brown mb-3 md:mb-4 flex items-center">
