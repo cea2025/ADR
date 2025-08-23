@@ -48,12 +48,6 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onCalculate, isCalculat
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Exchange Rate Display */}
-        <ExchangeRateDisplay 
-          onRateChange={setExchangeRate}
-          className="mb-6"
-        />
-
         {/* Investment Summary */}
         <div className="bg-adr-cream rounded-lg p-4 md:p-6">
           <h4 className="text-base md:text-lg font-semibold text-adr-brown mb-3 md:mb-4 flex items-center">
@@ -153,31 +147,10 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onCalculate, isCalculat
           </div>
         </div>
 
-        {/* Exchange Rate */}
-        <div className="space-y-3 md:space-y-4">
-          <h4 className="text-base md:text-lg font-semibold text-adr-brown">שער חליפין דולר-שקל</h4>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 space-x-reverse">
-            <div className="flex items-center space-x-3 space-x-reverse">
-              <input
-                type="number"
-                value={exchangeRate}
-                onChange={(e) => setExchangeRate(parseFloat(e.target.value) || 0)}
-                step="0.01"
-                min="0"
-                className="input-field w-32 text-center"
-                placeholder="3.65"
-              />
-              <span className="text-adr-brown text-sm md:text-base">₪ לדולר</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setExchangeRate(3.65)}
-              className="text-adr-light-brown hover:text-adr-brown text-xs md:text-sm underline"
-            >
-              איפוס לשער נוכחי
-            </button>
-          </div>
-        </div>
+        {/* Exchange Rate Display */}
+        <ExchangeRateDisplay 
+          onRateChange={setExchangeRate}
+        />
 
         {/* Submit Button */}
         <div className="text-center pt-4 md:pt-6">
