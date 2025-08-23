@@ -1,6 +1,7 @@
 export interface LifeSettlementPolicy {
   id: string;
   name: string; // "פוליסת כוכב", "משה וחנה"
+  policyType: string; // סוג הפוליסה - "Term Life", "Whole Life", "Universal Life" וכו'
   age: number | { male: number; female: number }; // גיל יחיד או זוג
   coupleType: 'single' | 'couple';
   insuranceCompany: string;

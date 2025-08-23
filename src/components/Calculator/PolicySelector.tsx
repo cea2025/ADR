@@ -129,6 +129,13 @@ const PolicySelector: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between">
+                  <span>סוג:</span>
+                  <span className="text-white font-semibold text-xs md:text-sm">
+                    {policy.policyType}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
                   <span>LE:</span>
                   <span className="text-white font-semibold text-xs md:text-sm">
                     {policy.lifeExpectancy} שנים
@@ -140,6 +147,30 @@ const PolicySelector: React.FC = () => {
                   <span className="sm:hidden">עלות:</span>
                   <span className="text-white font-semibold text-xs md:text-sm">
                     ${policy.purchaseCost.toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="hidden sm:inline">פתיחת תיק:</span>
+                  <span className="sm:hidden">פתיחה:</span>
+                  <span className="text-white font-semibold text-xs md:text-sm">
+                    ₪{policy.openingCost.toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="hidden sm:inline">דמי ניהול:</span>
+                  <span className="sm:hidden">ניהול:</span>
+                  <span className="text-white font-semibold text-xs md:text-sm">
+                    ${policy.monthlyManagementFee}/חודש
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="hidden sm:inline">פרמיה:</span>
+                  <span className="sm:hidden">פרמיה:</span>
+                  <span className="text-white font-semibold text-xs md:text-sm">
+                    ${policy.monthlyPremium}/חודש
                   </span>
                 </div>
               </div>
@@ -253,6 +284,13 @@ const PolicySelector: React.FC = () => {
                     </div>
 
                     <div className="flex items-center justify-between">
+                      <span>סוג:</span>
+                      <span className="text-white font-semibold text-xs md:text-sm">
+                        {policy.policyType}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
                       <span>LE:</span>
                       <span className="text-white font-semibold text-xs md:text-sm">
                         {policy.lifeExpectancy} שנים
@@ -263,6 +301,27 @@ const PolicySelector: React.FC = () => {
                       <span>עלות:</span>
                       <span className="text-white font-semibold text-xs md:text-sm">
                         ${policy.purchaseCost.toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span>פתיחה:</span>
+                      <span className="text-white font-semibold text-xs md:text-sm">
+                        ₪{policy.openingCost.toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span>ניהול:</span>
+                      <span className="text-white font-semibold text-xs md:text-sm">
+                        ${policy.monthlyManagementFee}/חודש
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span>פרמיה:</span>
+                      <span className="text-white font-semibold text-xs md:text-sm">
+                        ${policy.monthlyPremium}/חודש
                       </span>
                     </div>
                   </div>

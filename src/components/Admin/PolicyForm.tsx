@@ -12,6 +12,7 @@ interface PolicyFormProps {
 const PolicyForm: React.FC<PolicyFormProps> = ({ policy, onSave, onCancel, title }) => {
   const [formData, setFormData] = useState({
     name: '',
+    policyType: 'Universal Life',
     age: 75,
     coupleType: 'single' as 'single' | 'couple',
     maleAge: 75,
@@ -21,6 +22,9 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ policy, onSave, onCancel, title
     faceValue: 1000000,
     purchaseCost: 200000,
     lifeExpectancy: 8.5,
+    openingCost: 2000,
+    monthlyManagementFee: 12,
+    monthlyPremium: 54,
     isActive: true
   });
 
@@ -30,6 +34,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ policy, onSave, onCancel, title
     if (policy) {
       setFormData({
         name: policy.name,
+        policyType: policy.policyType || 'Universal Life',
         age: typeof policy.age === 'number' ? policy.age : 75,
         coupleType: policy.coupleType,
         maleAge: typeof policy.age === 'object' ? policy.age.male : 75,
@@ -39,6 +44,9 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ policy, onSave, onCancel, title
         faceValue: policy.faceValue,
         purchaseCost: policy.purchaseCost,
         lifeExpectancy: policy.lifeExpectancy,
+        openingCost: policy.openingCost || 2000,
+        monthlyManagementFee: policy.monthlyManagementFee || 12,
+        monthlyPremium: policy.monthlyPremium || 54,
         isActive: policy.isActive ?? true
       });
     }
@@ -98,6 +106,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ policy, onSave, onCancel, title
     const policyData = {
       ...(policy && { id: policy.id }),
       name: formData.name.trim(),
+      policyType: formData.policyType,
       age: formData.coupleType === 'single' 
         ? formData.age 
         : { male: formData.maleAge, female: formData.femaleAge },
@@ -107,11 +116,10 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ policy, onSave, onCancel, title
       faceValue: formData.faceValue,
       purchaseCost: formData.purchaseCost,
       lifeExpectancy: formData.lifeExpectancy,
-      isActive: formData.isActive,
-      // Add required fields with default values
-      openingCost: 5000, // Default opening cost
-      monthlyManagementFee: 50, // Default monthly fee
-      monthlyPremium: 200 // Default monthly premium
+      openingCost: formData.openingCost,
+      monthlyManagementFee: formData.monthlyManagementFee,
+      monthlyPremium: formData.monthlyPremium,
+      isActive: formData.isActive
     };
 
     onSave(policyData);
@@ -176,33 +184,54 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ policy, onSave, onCancel, title
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                סוג פוליסה
+                סוג הפוליסה *
               </label>
-              <div className="flex space-x-4 space-x-reverse">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    value="single"
-                    checked={formData.coupleType === 'single'}
-                    onChange={(e) => handleInputChange('coupleType', e.target.value)}
-                    className="mr-2"
-                  />
-                  <User className="w-4 h-4 ml-1" />
-                  יחיד
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    value="couple"
-                    checked={formData.coupleType === 'couple'}
-                    onChange={(e) => handleInputChange('coupleType', e.target.value)}
-                    className="mr-2"
-                  />
-                  <Users className="w-4 h-4 ml-1" />
-                  זוג
-                </label>
-              </div>
+              <select
+                value={formData.policyType}
+                onChange={(e) => handleInputChange('policyType', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-adr-brown focus:border-transparent"
+              >
+                <option value="Term Life">Term Life</option>
+                <option value="Whole Life">Whole Life</option>
+                <option value="Universal Life">Universal Life</option>
+                <option value="Variable Life">Variable Life</option>
+                <option value="Variable Universal Life">Variable Universal Life</option>
+              </select>
             </div>
+          </div>
+
+          {/* Policy Type Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              סוג המבוטח
+            </label>
+            <div className="flex space-x-4 space-x-reverse">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  value="single"
+                  checked={formData.coupleType === 'single'}
+                  onChange={(e) => handleInputChange('coupleType', e.target.value)}
+                  className="mr-2"
+                />
+                <User className="w-4 h-4 ml-1" />
+                יחיד
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  value="couple"
+                  checked={formData.coupleType === 'couple'}
+                  onChange={(e) => handleInputChange('coupleType', e.target.value)}
+                  className="mr-2"
+                />
+                <Users className="w-4 h-4 ml-1" />
+                זוג
+              </label>
+            </div>
+          </div>
+
+          <div>
           </div>
 
           {/* Age Section */}
@@ -331,6 +360,54 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ policy, onSave, onCancel, title
                 }`}
               />
               {errors.purchaseCost && <p className="mt-1 text-sm text-red-600">{errors.purchaseCost}</p>}
+            </div>
+          </div>
+
+          {/* Costs Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                עלות פתיחת תיק (₪) *
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="100"
+                value={formData.openingCost}
+                onChange={(e) => handleInputChange('openingCost', parseInt(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-adr-brown focus:border-transparent"
+                placeholder="2000"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                דמי ניהול חודשיים ($) *
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={formData.monthlyManagementFee}
+                onChange={(e) => handleInputChange('monthlyManagementFee', parseInt(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-adr-brown focus:border-transparent"
+                placeholder="12"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                פרמיה חודשית ($) *
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={formData.monthlyPremium}
+                onChange={(e) => handleInputChange('monthlyPremium', parseInt(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-adr-brown focus:border-transparent"
+                placeholder="54"
+              />
             </div>
           </div>
 
