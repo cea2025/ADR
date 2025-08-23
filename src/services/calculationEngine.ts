@@ -163,6 +163,19 @@ export class CalculationEngine {
         }, 0)
       : 0;
     
+    // חישוב עלות חודשית (פרמיות + דמי ניהול)
+    const monthlyCost = selectedPolicies.reduce((sum, selection) => {
+      const policy = policies.find(p => p.id === selection.policyId);
+      if (!policy) return sum;
+      
+      const monthlyPremium = policy.monthlyPremium * selection.units;
+      const monthlyManagement = includeCostsInReturn.managementFees 
+        ? policy.monthlyManagementFee * selection.units 
+        : 0;
+      
+      return sum + monthlyPremium + monthlyManagement;
+    }, 0);
+
     // חישוב ממוצעים משוקללים - כולל את כל העלויות
     const totalInvestment = totalPurchaseCost + totalMonthlyPremiums + totalManagementFees + totalOpeningCosts;
     const totalFaceValue = individualReturns.reduce((sum, ret) => sum + ret.totalReturn, 0);
@@ -210,6 +223,7 @@ export class CalculationEngine {
       totalManagementFees,
       totalOpeningCosts,
       totalInvestment,
+      monthlyCost, // עלות חודשית כוללת
       expectedReturns: {
         individual: individualReturns,
         average: averageReturn,

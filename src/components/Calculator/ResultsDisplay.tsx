@@ -82,6 +82,27 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
         </div>
       </div>
 
+      {/* Monthly Cost Highlight */}
+      <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-lg p-4 md:p-6 text-white mb-6 md:mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h4 className="text-orange-100 text-sm md:text-base font-medium mb-2">💰 עלות חודשית</h4>
+            <p className="text-white text-2xl md:text-4xl font-bold">
+              {formatCurrency(results.monthlyCost)}/חודש
+            </p>
+            <p className="text-orange-100 text-xs md:text-sm mt-1">
+              ₪{(results.monthlyCost * results.currencyConversion.usdToIls).toLocaleString()}/חודש
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-orange-100 text-xs md:text-sm">כולל פרמיות + דמי ניהול</p>
+            <p className="text-white text-lg md:text-xl font-semibold mt-1">
+              עד פקיעה: {formatCurrency(results.monthlyCost * results.expectedReturns.average.timeToMaturity * 12)}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Detailed Results */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
         {/* Investment Breakdown */}
